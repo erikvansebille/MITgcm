@@ -1,8 +1,8 @@
 # Travis file for running some basic set of testreport checks on each commit
 language: python
 
-services: 
- - docker
+# services: 
+#  - docker
 
 before_install:
     #  Set up environment needed for Sphinx to build docs
@@ -14,19 +14,21 @@ before_install:
   - pip install sphinx_rtd_theme
   - pip install sphinxcontrib-bibtex
     # Set up environment needed to run testreport code tests
-  - docker pull mitgcm/testreport-images:fc11-base-20170715
-  - docker run  -v `pwd`:/MITgcm --name fc11-testreport -t -d mitgcm/testreport-images:fc11-base-20170715 /bin/bash
-  - docker exec -i fc11-testreport rpm -vv --rebuilddb
-  - docker exec -i fc11-testreport df -h
-  - docker exec -i fc11-testreport ls -altr /MITgcm
-  - docker exec -i fc11-testreport yum install gcc-gfortran
-  - docker exec -i fc11-testreport yum install python-argparse
-  - docker exec -i fc11-testreport yum install libopenmpi-dev
-  - docker exec -i fc11-testreport yum install openmpi-bin
+  # - docker pull mitgcm/testreport-images:fc11-base-20170715
+  # - docker run  -v `pwd`:/MITgcm --name fc11-testreport -t -d mitgcm/testreport-images:fc11-base-20170715 /bin/bash
+  # - docker exec -i fc11-testreport rpm -vv --rebuilddb
+  # - docker exec -i fc11-testreport df -h
+  # - docker exec -i fc11-testreport ls -altr /MITgcm
+  - sudo apt-get install gcc
+  - sudo apt-get install gfortran
+  - pip install argparse
+  - sudo apt-get install libopenmpi-dev
+  - sudo apt-get install openmpi-bin
   # set options for Travis script
   - echo `pwd`
-  - export MITGCM_TROPT="-devel -of=../tools/build_options/linux_amd64_gfortran -MPI 5"
-  - export MITGCM_DECMD="docker exec -i fc11-testreport bash -c"
+  - export MITGCM_TROPT="-devel -of=../tools/build_options/linux_amd64_gfortran"
+  # - export MITGCM_DECMD="docker exec -i fc11-testreport bash -c"
+  - export MITGCM_DECMD=""
 
 jobs:
   include:
