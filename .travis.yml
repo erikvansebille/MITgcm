@@ -5,7 +5,8 @@ language: python
 #  - docker
 
 before_install:
-    #  Set up environment needed for Sphinx to build docs
+  - test -n $CC && unset CC
+  #  Set up environment needed for Sphinx to build docs
   - sudo apt-get install texlive-latex-recommended
   - sudo apt-get install texlive-latex-extra
   - sudo apt-get install texlive-fonts-recommended
@@ -24,11 +25,12 @@ before_install:
   # - sudo apt-get install netcdf-bin
   # - sudo apt-get install libnetcdff5
   - pip install argparse
-  - sudo apt-get install libopenmpi-dev
-  - sudo apt-get install openmpi-bin
+  - sudo apt-get install mpich
+  - sudo apt-get install libmpich-dev
   # set options for Travis script
   - echo `pwd`
-  - export MITGCM_TROPT="-devel -of=../tools/build_options/linux_amd64_gfortran"
+  - export MITGCM_TROPT="-devel"
+  # -of=../tools/build_options/linux_amd64_gfortran"
   # - export MITGCM_DECMD="docker exec -i fc11-testreport bash -c"
   - export MITGCM_DECMD=""
 
@@ -38,43 +40,66 @@ jobs:
     - stage: code tests
       env: 
       - MITGCM_EXP="aim.5l_cs" MITGCM_PRECS="14 16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env:
       - MITGCM_EXP="global_ocean.90x40x15"
       - MITGCM_PRECS="16 16 16"
       script: 
-      - export MITGCM_TROPT="-devel -of=../tools/build_options/linux_amd64_gfortran -MPI 5"
-      - tools/ci/runtr.sh
+      - export MITGCM_TROPT="-devel -MPI 5" 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env:
       - MITGCM_EXP="global_ocean.cs32x15" MITGCM_PRECS="16 16 16 16 16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env: 
       - MITGCM_EXP="hs94.cs-32x32x5" MITGCM_PRECS="13 16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env: 
       - MITGCM_EXP="isomip" MITGCM_PRECS="16 16 16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env: 
       - MITGCM_EXP="offline_exf_seaice" MITGCM_PRECS="16 16 16 16 16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env: 
       - MITGCM_EXP="tutorial_advection_in_gyre" MITGCM_PRECS="16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env: 
       - MITGCM_EXP="tutorial_cfc_offline" MITGCM_PRECS="16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env: 
       - MITGCM_EXP="tutorial_deep_convection" MITGCM_PRECS="16 16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env: 
       - MITGCM_EXP="tutorial_global_oce_biogeo" MITGCM_PRECS="16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env: 
       - MITGCM_EXP="tutorial_global_oce_in_p" MITGCM_PRECS="16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     - env: 
       - MITGCM_EXP="tutorial_plume_on_slope" MITGCM_PRECS="16"
-      script: tools/ci/runtr.sh
+      script: 
+      - cd verification; ./testreport -t ${MITGCM_EXP} ${MITGCM_TROPT} | tee ${MITGCM_EXP}/testreport_out.txt
+      - python verification_parser.py -filename ${MITGCM_EXP}/testreport_out.txt -threshold ${MITGCM_PRECS}
     # - stage: summary of code tests
     # disabled because jobs do not share data
     # Generate a summary
