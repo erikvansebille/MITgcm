@@ -19,12 +19,13 @@ before_install:
   - docker exec -i fc11-testreport rpm -vv --rebuilddb
   - docker exec -i fc11-testreport df -h
   - docker exec -i fc11-testreport ls -altr /MITgcm
-  - docker exec -i fc11-testreport yum install python-pip
   - docker exec -i fc11-testreport yum install gcc-gfortran
   - docker exec -i fc11-testreport yum install python-argparse
+  - docker exec -i fc11-testreport yum install libopenmpi-dev
+  - docker exec -i fc11-testreport yum install openmpi-bin
   # set options for Travis script
   - echo `pwd`
-  - export MITGCM_TROPT="-devel -of=../tools/build_options/linux_amd64_gfortran"
+  - export MITGCM_TROPT="-devel -of=../tools/build_options/linux_amd64_gfortran -MPI 5"
   - export MITGCM_DECMD="docker exec -i fc11-testreport bash -c"
 
 jobs:
@@ -36,9 +37,6 @@ jobs:
       script: tools/ci/runtr.sh
     - env:
       - MITGCM_EXP="global_ocean.cs32x15" MITGCM_PRECS="16 16 16 16 16"
-      script: tools/ci/runtr.sh
-    - env: 
-      - MITGCM_EXP="global_ocean.90x40x15" MITGCM_PRECS="16 16 16"
       script: tools/ci/runtr.sh
     - env: 
       - MITGCM_EXP="hs94.cs-32x32x5" MITGCM_PRECS="13 16"
@@ -66,6 +64,11 @@ jobs:
       script: tools/ci/runtr.sh
     - env: 
       - MITGCM_EXP="tutorial_plume_on_slope" MITGCM_PRECS="16"
+      script: tools/ci/runtr.sh
+    - env:
+      - MITGCM_EXP="global_ocean.90x40x15"
+      - MITGCM_PRECS="16 16 16"
+      - MITGCM_TROPT="-devel -of=../tools/build_options/linux_amd64_gfortran -MPI 5"
       script: tools/ci/runtr.sh
     # - stage: summary of code tests
     # disabled because jobs do not share data
